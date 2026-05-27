@@ -1,6 +1,5 @@
 import {
   ArrayMinSize,
-  IsAlpha,
   IsString,
   IsNotEmpty,
   IsNumber,
@@ -12,34 +11,33 @@ import { MAX_RATING, MIN_RATING } from '../constants';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMovieDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'The Matrix' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 2020 })
   @IsInt()
   @Max(new Date().getFullYear())
   year: number;
 
-  @ApiProperty()
-  @IsAlpha()
+  @ApiProperty({ example: ['Action', 'Sci-Fi'] })
   @IsString({ each: true })
   @ArrayMinSize(1)
   genres: string[];
 
-  @ApiProperty()
+  @ApiProperty({ example: 8.5 })
   @IsNumber()
   @Min(MIN_RATING)
   @Max(MAX_RATING)
   rating: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 120 })
   @IsInt()
   @Min(1)
   duration: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Lana Wachowski' })
   @IsString()
   @IsNotEmpty()
   director: string;

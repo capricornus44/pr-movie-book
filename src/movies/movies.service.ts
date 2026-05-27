@@ -35,10 +35,9 @@ export class MoviesService {
 
   update(id: string, updateMovieDto: UpdateMovieDto): MovieEntity {
     const movie = this.findOne(id);
-    const updatedMovie = { ...movie, ...updateMovieDto };
-    this.movies = this.movies.map((m) => (m.id === id ? updatedMovie : m));
+    Object.assign(movie, updateMovieDto);
 
-    return updatedMovie;
+    return movie;
   }
 
   remove(id: string): void {
