@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL (Transactional database for halls, showtimes, and bookings)
+  postgres:
+    image: postgres:18.4-alpine
+    container_name: moviebook_postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: moviebook
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # 2. MongoDB (NoSQL database for the movie catalog and reviews)
+  mongodb:
+    image: mongo:8.0
+    container_name: moviebook_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: moviebook
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  mongodb_data:
