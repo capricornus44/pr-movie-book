@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Hall {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  capacity  Int
+  seats     Seat[]
+  showtimes Showtime[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Seat {
+  id        String   @id @default(uuid())
+  row       String
+  number    Int
+  hallId    String
+  hall      Hall     @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hallId, row, number]) // there cannot be two seats 'A-1' in the same hall
+}
+
+model Showtime {
+  id        String   @id @default(uuid())
+  movieId   String // IMPORTANT: this is the movie ID from MongoDB (we simply store it as a string)
+  hallId    String
+  price     Decimal  @db.Decimal(10, 2)
+  startTime DateTime
+  endTime   DateTime
+  hall      Hall     @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
