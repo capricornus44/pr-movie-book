@@ -1,31 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { MovieEntity } from './entities/movie.entity';
+import { Movie, MovieDocument } from './schemas/movie.schema';
 
 @Injectable()
 export class MoviesService {
-  // In-memory store — temporary replacement for the database
-  private movies: MovieEntity[] = [];
+  constructor(
+    @InjectModel(Movie.name) private movieModel: Model<MovieDocument>,
+  ) {}
 
-  create(createMovieDto: CreateMovieDto): MovieEntity {
-    const movie = new MovieEntity({
-      id: randomUUID(),
-      ...createMovieDto,
-    });
-    this.movies.push(movie);
-
-    return movie;
+  async create(createMovieDto: CreateMovieDto): Promise<Movie> {
+    const createdMovie = new this.movieModel(createMovieDto);
+    return createdMovie.save();
   }
 
-  findAll(): MovieEntity[] {
-    return this.movies;
+  async findAll(): Promise<Movie[]> {
+    return this.movieModel.find().exec();
   }
 
-  findOne(id: string): MovieEntity {
-    const movie = this.movies.find((movie) => movie.id === id);
+  async findOne(id: string): Promise<Movie> {
+    const movie = await this.movieModel.findById(id).exec();
 
     if (!movie) {
       throw new NotFoundException(`Movie with id ${id} not found`);
@@ -33,15 +30,22 @@ export class MoviesService {
     return movie;
   }
 
-  update(id: string, updateMovieDto: UpdateMovieDto): MovieEntity {
-    const movie = this.findOne(id);
-    Object.assign(movie, updateMovieDto);
+  async update(id: string, updateMovieDto: UpdateMovieDto): Promise<Movie> {
+    const updatedMovie = await this.movieModel
+      .findByIdAndUpdate(id, updateMovieDto, { new: true })
+      .exec();
 
-    return movie;
+    if (!updatedMovie) {
+      throw new NotFoundException(`Movie with id ${id} not found`);
+    }
+    return updatedMovie;
   }
 
-  remove(id: string): void {
-    this.findOne(id);
-    this.movies = this.movies.filter((m) => m.id !== id);
+  async remove(id: string): Promise<void> {
+    const deletedMovie = await this.movieModel.findByIdAndDelete(id).exec();
+
+    if (!deletedMovie) {
+      throw new NotFoundException(`Movie with id ${id} not found`);
+    }
   }
 }

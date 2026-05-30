@@ -14,7 +14,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { MovieEntity } from './entities/movie.entity';
+import { Movie } from './schemas/movie.schema';
 
 @ApiTags('movies')
 @Controller('movies')
@@ -26,10 +26,10 @@ export class MoviesController {
   @ApiResponse({
     status: 201,
     description: 'Movie created successfully',
-    type: MovieEntity,
+    type: Movie,
   })
   @ApiResponse({ status: 400, description: 'Validation failed' })
-  create(@Body() createMovieDto: CreateMovieDto): MovieEntity {
+  async create(@Body() createMovieDto: CreateMovieDto): Promise<Movie> {
     return this.moviesService.create(createMovieDto);
   }
 
@@ -38,9 +38,9 @@ export class MoviesController {
   @ApiResponse({
     status: 200,
     description: 'List of all movies',
-    type: [MovieEntity],
+    type: [Movie],
   })
-  findAll(): MovieEntity[] {
+  async findAll(): Promise<Movie[]> {
     return this.moviesService.findAll();
   }
 
@@ -49,13 +49,13 @@ export class MoviesController {
   @ApiResponse({
     status: 200,
     description: 'Movie found',
-    type: MovieEntity,
+    type: Movie,
   })
   @ApiResponse({
     status: 404,
     description: 'Movie not found',
   })
-  findOne(@Param('id') id: string): MovieEntity {
+  async findOne(@Param('id') id: string): Promise<Movie> {
     return this.moviesService.findOne(id);
   }
 
@@ -64,17 +64,17 @@ export class MoviesController {
   @ApiResponse({
     status: 200,
     description: 'Movie updated successfully',
-    type: MovieEntity,
+    type: Movie,
   })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   @ApiResponse({
     status: 404,
     description: 'Movie not found',
   })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateMovieDto: UpdateMovieDto,
-  ): MovieEntity {
+  ): Promise<Movie> {
     return this.moviesService.update(id, updateMovieDto);
   }
 
@@ -89,7 +89,7 @@ export class MoviesController {
     status: 404,
     description: 'Movie not found',
   })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<void> {
     return this.moviesService.remove(id);
   }
 }
