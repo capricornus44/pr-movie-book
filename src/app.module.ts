@@ -7,6 +7,7 @@ import { expand } from 'dotenv-expand';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MoviesModule } from './movies/movies.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 const myEnv = dotenv.config();
 expand(myEnv);
@@ -25,6 +26,7 @@ expand(myEnv);
         return { uri };
       },
     }),
+    PrismaModule,
     MoviesModule,
   ],
   controllers: [AppController],
