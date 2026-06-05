@@ -6,6 +6,10 @@ import { expand } from 'dotenv-expand';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HallsModule } from './halls/halls.module';
+import { SeatsModule } from './seats/seats.module';
+import { ShowtimesModule } from './showtimes/showtimes.module';
+import { BookingsModule } from './bookings/bookings.module';
 import { MoviesModule } from './movies/movies.module';
 import { PrismaModule } from './prisma/prisma.module';
 
@@ -28,6 +32,10 @@ expand(myEnv);
     }),
     PrismaModule,
     MoviesModule,
+    HallsModule,
+    SeatsModule,
+    ShowtimesModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

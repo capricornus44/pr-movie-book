@@ -31,7 +31,7 @@ model Seat {
 
 model Showtime {
   id        String    @id @default(uuid())
-  movieId   String // this is the movie ID from MongoDB (we simply store it as a string)
+  movieId   String
   hallId    String
   price     Decimal   @db.Decimal(10, 2)
   startTime DateTime
@@ -55,12 +55,9 @@ model Booking {
   userId     String
   showtimeId String
   showtime   Showtime      @relation(fields: [showtimeId], references: [id], onDelete: Cascade)
-  seatId     String
-  seat       Seat          @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  seats      Seat[]
   totalPrice Decimal       @db.Decimal(10, 2)
   expiresAt  DateTime?
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
-
-  @@unique([showtimeId, seatId]) // Prevent booking the same seat twice within a single session
 }
