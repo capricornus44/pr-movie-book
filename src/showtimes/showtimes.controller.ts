@@ -8,11 +8,20 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ShowtimesService } from './showtimes.service';
 import { CreateShowtimeDto } from './dto/create-showtime.dto';
 import { UpdateShowtimeDto } from './dto/update-showtime.dto';
+import { JwtAuthGuard, RolesGuard } from '../auth/guards/auth.guards';
+import { Roles } from '../auth/decorators/auth.decorators';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('showtimes')
 @Controller('showtimes')
@@ -20,6 +29,9 @@ export class ShowtimesController {
   constructor(private readonly showtimesService: ShowtimesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CONTENT_MANAGER)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary:
       'Create a new showtime (validates movie duration and checks overlapping)',
@@ -49,6 +61,9 @@ export class ShowtimesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CONTENT_MANAGER)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update a showtime' })
   @ApiResponse({ status: 200, description: 'Showtime updated successfully' })
   @ApiResponse({ status: 404, description: 'Showtime not found' })
@@ -64,6 +79,9 @@ export class ShowtimesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CONTENT_MANAGER)
+  @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a showtime' })
   @ApiResponse({ status: 204, description: 'Showtime deleted' })

@@ -8,11 +8,20 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { HallsService } from './halls.service';
 import { CreateHallDto } from './dto/create-hall.dto';
 import { UpdateHallDto } from './dto/update-hall.dto';
+import { JwtAuthGuard, RolesGuard } from '../auth/guards/auth.guards';
+import { Roles } from '../auth/decorators/auth.decorators';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('halls')
 @Controller('halls')
@@ -20,6 +29,9 @@ export class HallsController {
   constructor(private readonly hallsService: HallsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create a new hall' })
   @ApiResponse({ status: 201, description: 'Hall created successfully' })
   @ApiResponse({ status: 400, description: 'Validation failed' })
@@ -49,6 +61,9 @@ export class HallsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update a hall' })
   @ApiResponse({ status: 200, description: 'Hall updated' })
   @ApiResponse({ status: 404, description: 'Hall not found' })
@@ -57,6 +72,9 @@ export class HallsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a hall' })
   @ApiResponse({ status: 204, description: 'Hall deleted' })

@@ -11,7 +11,7 @@ import { BookingStatus } from '@prisma/client';
 export class BookingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateBookingDto) {
+  async create(dto: CreateBookingDto, userId: string) {
     // Prevent race conditions
     return this.prisma.$transaction(async (tx) => {
       const [showtime, seats] = await Promise.all([
@@ -72,7 +72,7 @@ export class BookingsService {
 
       return tx.booking.create({
         data: {
-          userId: dto.userId,
+          userId,
           showtimeId: dto.showtimeId,
           totalPrice,
           status: BookingStatus.PENDING,

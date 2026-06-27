@@ -53,6 +53,7 @@ model Booking {
   id         String        @id @default(uuid())
   status     BookingStatus @default(PENDING)
   userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   showtimeId String
   showtime   Showtime      @relation(fields: [showtimeId], references: [id], onDelete: Cascade)
   seats      Seat[]
@@ -60,4 +61,24 @@ model Booking {
   expiresAt  DateTime?
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  CONTENT_MANAGER
+  CUSTOMER
+}
+
+model User {
+  id                      String    @id @default(uuid())
+  email                   String    @unique
+  password                String
+  role                    UserRole  @default(CUSTOMER)
+  isVerified              Boolean   @default(false)
+  verificationCode        String?
+  verificationCodeExpires DateTime?
+  refreshTokenHash        String?
+  bookings                Booking[]
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 }

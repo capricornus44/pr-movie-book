@@ -12,6 +12,9 @@ import { ShowtimesModule } from './showtimes/showtimes.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { MoviesModule } from './movies/movies.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { MailModule } from './mail/mail.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 const myEnv = dotenv.config();
 expand(myEnv);
@@ -36,6 +39,9 @@ expand(myEnv);
     SeatsModule,
     ShowtimesModule,
     BookingsModule,
+    MailModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

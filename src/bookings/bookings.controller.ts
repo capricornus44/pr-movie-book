@@ -1,9 +1,26 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { JwtAuthGuard } from '../auth/guards/auth.guards';
+import { CurrentUser } from '../auth/decorators/auth.decorators';
 
 @ApiTags('bookings')
+@ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard)
 @Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
@@ -16,8 +33,11 @@ export class BookingsController {
     status: 409,
     description: 'Seats are already booked or mismatch halls',
   })
-  create(@Body() createBookingDto: CreateBookingDto) {
-    return this.bookingsService.create(createBookingDto);
+  create(
+    @Body() createBookingDto: CreateBookingDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.bookingsService.create(createBookingDto, userId);
   }
 
   @Get()

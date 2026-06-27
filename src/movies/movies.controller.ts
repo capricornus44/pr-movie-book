@@ -8,13 +8,22 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './schemas/movie.schema';
+import { JwtAuthGuard, RolesGuard } from '../auth/guards/auth.guards';
+import { Roles } from '../auth/decorators/auth.decorators';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('movies')
 @Controller('movies')
@@ -22,6 +31,9 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CONTENT_MANAGER)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create a new movie' })
   @ApiResponse({
     status: 201,
@@ -60,6 +72,9 @@ export class MoviesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CONTENT_MANAGER)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update a movie by ID' })
   @ApiResponse({
     status: 200,
@@ -79,6 +94,9 @@ export class MoviesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CONTENT_MANAGER)
+  @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a movie by ID' })
   @ApiResponse({

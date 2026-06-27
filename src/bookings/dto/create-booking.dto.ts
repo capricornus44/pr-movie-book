@@ -21,13 +21,4 @@ export class CreateBookingDto {
   @IsUUID('all', { each: true })
   @ArrayMinSize(1)
   seatIds: string[];
-
-  @ApiProperty({
-    example: 'a12283de-a8ba-4672-881c-cb880e66050a',
-    description:
-      'User UUID (mocked for now until authentication is implemented)',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  userId: string;
 }
